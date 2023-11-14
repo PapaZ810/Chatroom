@@ -1,29 +1,47 @@
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
 
 public class Handler
 {
+	private ArrayList<BufferedWriter> clients;
 
 	/**
 	 * this method is invoked by a separate thread
 	 */
-	public void process(Socket client) throws java.io.IOException {
-		DataOutputStream toClient = null;
-		int count = 0;
+	public void process(Socket client, ArrayList<BufferedWriter> clients) throws java.io.IOException {
+		BufferedWriter toClient = null;
+		BufferedReader fromClient = null;
+		String message = null;
+		String username = null;
 
 		try {
-			toClient = new DataOutputStream(client.getOutputStream());
+			toClient = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+			fromClient = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
 			while (true) {
-				String message = "[" + count + "]\n";	
-				toClient.writeBytes(message);
-				
-				try {
-					Thread.sleep(5000);
-				}
-				catch (InterruptedException ie) { }
+				message = fromClient.readLine();
+				System.out.println(message);
+				if (message.substring(0, message.indexOf("<")).equals("user")) {
+					username = message.substring(message.indexOf("<"), message.indexOf(">"));
+					if(username.contains("<") || username.contains(">") || username.contains(",")) {
+						toClient.write(2);
+						toClient.flush();
+					}
+					else if (clients.contains(username)) {
+						toClient.write(1);
+						toClient.flush();
+					}
+					else if (username.length() > 20) {
+						toClient.write(3);
+						toClient.flush();
+					} else {
+						clients.add(toClient);
+						toClient.write(4);
+						toClient.flush();
+					}
 
-				count++;
+				}
 			}
 		}
 		catch (IOException ioe) {
