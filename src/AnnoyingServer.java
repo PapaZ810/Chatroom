@@ -10,7 +10,7 @@ import java.util.concurrent.*;
 
 public class  AnnoyingServer
 {
-	public static final int DEFAULT_PORT = 16008;
+	public static final int DEFAULT_PORT = 5040;
 
 	// construct a thread pool for concurrency	
 	private static final Executor exec = Executors.newCachedThreadPool();
