@@ -30,6 +30,7 @@ public class ReaderThread implements Runnable
                     case "2" -> screen.displayMessage("Username contains invalid characters. Please try again.\n");
                     case "3" -> screen.displayMessage("Username is too long. Please try again.\n");
                     case "4" -> screen.displayMessage("Welcome to Zac and Landon's Chatroom");
+					case "9" -> screen.displayMessage("Recipient is not online. Please try again.");
                     default -> screen.displayMessage(message);
                 }
 			}
