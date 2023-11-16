@@ -1,14 +1,14 @@
 import java.net.*;
 import java.io.*;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Connection implements Runnable
 {
 	private Socket	client;
-	private ArrayList<BufferedWriter> clients;
+	private HashMap<String, BufferedWriter> clients;
 	private static Handler handler = new Handler();
 
-	public Connection(Socket client, ArrayList<BufferedWriter> clients) {
+	public Connection(Socket client, HashMap<String, BufferedWriter> clients) {
 		this.client = client;
 		this.clients = clients;
 	}

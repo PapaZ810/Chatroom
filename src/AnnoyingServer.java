@@ -6,7 +6,7 @@
 
 import java.net.*;
 import java.io.*;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.*;
 
 public class  AnnoyingServer
@@ -18,7 +18,7 @@ public class  AnnoyingServer
 
 	public static void main(String[] args) throws IOException {
 		ServerSocket sock = null;
-		ArrayList<BufferedWriter> clients = new ArrayList<BufferedWriter>();
+		HashMap<String, BufferedWriter> clients = new HashMap<>();
 
 		try {
 			// establish the socket
