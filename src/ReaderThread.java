@@ -26,10 +26,14 @@ public class ReaderThread implements Runnable
 				String message = fromServer.readLine();
 				System.out.println(message);
                 switch (message) {
-                    case "1" -> screen.displayMessage("Username already taken. Please try again.\n");
-                    case "2" -> screen.displayMessage("Username contains invalid characters. Please try again.\n");
-                    case "3" -> screen.displayMessage("Username is too long. Please try again.\n");
-                    case "4" -> screen.displayMessage("Welcome to Zac and Landon's Chatroom");
+                    case "1" -> screen.displayMessage("Username already taken. Please try again.");
+                    case "2" -> screen.displayMessage("Username contains invalid characters. Please try again.");
+                    case "3" -> screen.displayMessage("Username is too long. Please try again.");
+                    case "4" -> screen.displayMessage("Welcome to Zac and Landon's Chatroom!");
+					case "5" -> screen.displayMessage("Your message was too long. Please try again.");
+					case "6" -> screen.displayMessage("Reserved Character used. Please try again.");
+					case "7" -> screen.displayMessage("TODO");
+					case "8" -> screen.displayMessage("TODO");
 					case "9" -> screen.displayMessage("Recipient is not online. Please try again.");
                     default -> screen.displayMessage(message);
                 }
