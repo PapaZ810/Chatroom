@@ -2,7 +2,8 @@ import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class Handler
 {
@@ -23,6 +24,7 @@ public class Handler
 
 			while (true) {
 				message = fromClient.readLine();
+                String currentTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
                 switch (message.substring(0, message.indexOf("<"))) {
                     case "user" -> {
                         username = message.substring(message.indexOf("<") + 1, message.indexOf(">"));
@@ -45,24 +47,34 @@ public class Handler
                         toClient.flush();
                     }
                     case "broadcast" -> {
-                        String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
-                        clients.get(sender).write("8\n");
-                        for (String key : clients.keySet()) {
-                            clients.get(key).write(message + "\n");
-                            clients.get(key).flush();
+                        if(message.length() > 1024) {
+                            toClient.write("5\n");
+                            toClient.flush();
+                        } else {
+                            String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
+                            clients.get(sender).write("8\n");
+                            for (String key : clients.keySet()) {
+                                clients.get(key).write(message + "\n");
+                                clients.get(key).flush();
+                            }
                         }
                     }
                     case "private" -> {
-                        String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
-                        String time = message.substring(message.indexOf(",") + 1, message.lastIndexOf(","));
-                        String recipient = message.substring(message.lastIndexOf(",") + 1, message.indexOf(">"));
-                        clients.get(sender).write("7\n");
-                        if (clients.containsKey(recipient)) {
-                            clients.get(recipient).write(message + "\n");
-                            clients.get(recipient).flush();
+                        if(message.length() > 1024) {
+                            toClient.write("5\n");
+                            toClient.flush();
                         } else {
-                            clients.get(sender).write("9\n");
-                            clients.get(sender).flush();
+                            String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
+                            String time = message.substring(message.indexOf(",") + 1, message.lastIndexOf(","));
+                            String recipient = message.substring(message.lastIndexOf(",") + 1, message.indexOf(">"));
+                            clients.get(sender).write("7\n");
+                            if (clients.containsKey(recipient)) {
+                                clients.get(recipient).write(message + "\n");
+                                clients.get(recipient).flush();
+                            } else {
+                                clients.get(sender).write("9\n");
+                                clients.get(sender).flush();
+                            }
                         }
                     }
                     case "ls" -> {
@@ -79,7 +91,7 @@ public class Handler
                         String sender = message.substring(message.indexOf("<") + 1, message.indexOf(">"));
                         clients.remove(sender).close();
                         for (String key : clients.keySet()) {
-                            clients.get(key).write("broadcast<" + sender + "," + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + "," + sender + " has left the chatroom.>\n");
+                            clients.get(key).write("broadcast<" + sender + "," + currentTime + "," + sender + " has left the chatroom.>\n");
                             clients.get(key).flush();
                         }
                     }
