@@ -35,6 +35,12 @@ public class Handler
                         } else {
                             clients.put(username, toClient);
                             toClient.write("4\n");
+                            toClient.write("userlist<");
+                            ArrayList<String> keys = new ArrayList<>(clients.keySet());
+                            for (String key : keys) {
+                                toClient.write(key + ",");
+                            }
+                            toClient.write(">\n");
                         }
                         toClient.flush();
                     }

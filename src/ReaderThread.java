@@ -39,6 +39,7 @@ public class ReaderThread implements Runnable
 							String msg = message.substring(message.indexOf(">") + 1);
 							screen.displayMessage(sender + " (" + time + ") to " + recipient + ": " + msg);
 						}
+						default -> screen.displayMessage(message);
 					}
 				} else {
 					switch (message) {
