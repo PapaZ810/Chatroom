@@ -24,18 +24,35 @@ public class ReaderThread implements Runnable
 
 			while (true) {
 				String message = fromServer.readLine();
-                switch (message) {
-                    case "1" -> screen.displayMessage("Username already taken. Please try again.");
-                    case "2" -> screen.displayMessage("Username contains invalid characters. Please try again.");
-                    case "3" -> screen.displayMessage("Username is too long. Please try again.");
-                    case "4" -> screen.displayMessage("Welcome to Zac and Landon's Chatroom!");
-					case "5" -> screen.displayMessage("Your message was too long. Please try again.");
-					case "6" -> screen.displayMessage("Reserved Character used. Please try again.");
-					case "7" -> screen.displayMessage("Server received your broadcast message.");
-					case "8" -> screen.displayMessage("Server received your private message.");
-					case "9" -> screen.displayMessage("Recipient is not online. Please try again.");
-                    default -> screen.displayMessage(message);
-                }
+				if (message.contains("<") || message.contains(">")) {
+					switch(message.substring(0, message.indexOf("<"))){
+						case "broadcast" -> {
+							String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
+							String time = message.substring(message.indexOf(",") + 1, message.lastIndexOf(","));
+							String msg = message.substring(message.lastIndexOf(",") + 1, message.indexOf(">"));
+							screen.displayMessage(sender + " (" + time + "): " + msg);
+						}
+						case "private" -> {
+							String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
+							String time = message.substring(message.indexOf(",") + 1, message.lastIndexOf(","));
+							String recipient = message.substring(message.lastIndexOf(",") + 1, message.indexOf(">"));
+							String msg = message.substring(message.indexOf(">") + 1);
+							screen.displayMessage(sender + " (" + time + ") to " + recipient + ": " + msg);
+						}
+					}
+				} else {
+					switch (message) {
+						case "1" -> screen.displayMessage("Username already taken. Please try again.");
+						case "2" -> screen.displayMessage("Username contains invalid characters. Please try again.");
+						case "3" -> screen.displayMessage("Username is too long. Please try again.");
+						case "4" -> screen.displayMessage("Welcome to Zac and Landon's Chatroom!");
+						case "5" -> screen.displayMessage("Your message was too long. Please try again.");
+						case "6" -> screen.displayMessage("Reserved Character used. Please try again.");
+						case "7" -> screen.displayMessage("Server received your private message.");
+						case "8" -> screen.displayMessage("Server received your broadcast message.");
+						case "9" -> screen.displayMessage("Recipient is not online. Please try again.");
+					}
+				}
 			}
 		}
 		catch (IOException ioe) { System.out.println(ioe); }
