@@ -23,11 +23,9 @@ public class Handler
 
 			while (true) {
 				message = fromClient.readLine();
-				System.out.println(message);
                 switch (message.substring(0, message.indexOf("<"))) {
                     case "user" -> {
                         username = message.substring(message.indexOf("<") + 1, message.indexOf(">"));
-						System.out.println(username);
                         if (username.contains("<") || username.contains(">") || username.contains(",")) {
                             toClient.write("2\n");
                         } else if (clients.containsKey(username)) {
@@ -41,6 +39,8 @@ public class Handler
                         toClient.flush();
                     }
                     case "broadcast" -> {
+                        String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
+                        clients.get(sender).write("8\n");
                         for (String key : clients.keySet()) {
                             clients.get(key).write(message + "\n");
                             clients.get(key).flush();
@@ -50,6 +50,7 @@ public class Handler
                         String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
                         String time = message.substring(message.indexOf(",") + 1, message.lastIndexOf(","));
                         String recipient = message.substring(message.lastIndexOf(",") + 1, message.indexOf(">"));
+                        clients.get(sender).write("7\n");
                         if (clients.containsKey(recipient)) {
                             clients.get(recipient).write(message + "\n");
                             clients.get(recipient).flush();
