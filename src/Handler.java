@@ -61,7 +61,7 @@ public class Handler
                     case "ls" -> {
                         String sender = message.substring(message.indexOf("<") + 1, message.indexOf(">"));
                         ArrayList<String> keys = new ArrayList<>(clients.keySet());
-                        clients.get(sender).write("userlist< ");
+                        clients.get(sender).write("userlist<");
                         for (String key : keys) {
                             clients.get(sender).write(key + ",");
                         }
@@ -70,7 +70,7 @@ public class Handler
                     }
                     case "exit" -> {
                         String sender = message.substring(message.indexOf("<") + 1, message.indexOf(">"));
-                        clients.remove(sender);
+                        clients.remove(sender).close();
                         for (String key : clients.keySet()) {
                             clients.get(key).write("broadcast<" + sender + "," + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + "," + sender + " has left the chatroom.>\n");
                             clients.get(key).flush();
@@ -86,6 +86,8 @@ public class Handler
 			// close streams and socket
 			if (toClient != null)
 				toClient.close();
+            if (fromClient != null)
+                fromClient.close();
 		}
 	}
 }
