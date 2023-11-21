@@ -65,8 +65,7 @@ public class Handler
                             toClient.flush();
                         } else {
                             String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
-                            String time = message.substring(message.indexOf(",") + 1, message.lastIndexOf(","));
-                            String recipient = message.substring(message.lastIndexOf(",") + 1, message.indexOf(">"));
+                            String recipient = message.substring(message.indexOf(",") + 1, message.indexOf(",", message.indexOf(",") + 1));
                             clients.get(sender).write("7\n");
                             if (clients.containsKey(recipient)) {
                                 clients.get(recipient).write(message + "\n");

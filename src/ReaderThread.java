@@ -5,6 +5,8 @@
 
 import java.io.*;
 import java.net.*;
+import java.util.Arrays;
+import java.util.Vector;
 import javax.swing.*;
 
 public class ReaderThread implements Runnable
@@ -30,14 +32,22 @@ public class ReaderThread implements Runnable
 							String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
 							String time = message.substring(message.indexOf(",") + 1, message.lastIndexOf(","));
 							String msg = message.substring(message.lastIndexOf(",") + 1, message.indexOf(">"));
+							if(sender.equalsIgnoreCase("server")) {
+
+							}
 							screen.displayMessage(sender + " (" + time + "): " + msg);
 						}
 						case "private" -> {
 							String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
+							String recipient = message.substring(message.indexOf(",") + 1, message.indexOf(",", message.indexOf(",") + 1));
 							String time = message.substring(message.indexOf(",") + 1, message.lastIndexOf(","));
-							String recipient = message.substring(message.lastIndexOf(",") + 1, message.indexOf(">"));
-							String msg = message.substring(message.indexOf(">") + 1);
+							time = time.substring(time.indexOf(",")+1);
+							String msg = message.substring(message.lastIndexOf(",") + 1, message.indexOf(">"));
 							screen.displayMessage(sender + " (" + time + ") to " + recipient + ": " + msg);
+						}
+						case "userlist" -> {
+							String list = message.substring(message.indexOf("<")+1, message.indexOf(">"));
+							screen.setUserList(new Vector<>(Arrays.asList(list.split(","))));
 						}
 						default -> screen.displayMessage(message);
 					}
@@ -49,8 +59,6 @@ public class ReaderThread implements Runnable
 						case "4" -> screen.displayMessage("Welcome to Zac and Landon's Chatroom!");
 						case "5" -> screen.displayMessage("Your message was too long. Please try again.");
 						case "6" -> screen.displayMessage("Reserved Character used. Please try again.");
-						case "7" -> screen.displayMessage("Server received your private message.");
-						case "8" -> screen.displayMessage("Server received your broadcast message.");
 						case "9" -> screen.displayMessage("Recipient is not online. Please try again.");
 					}
 				}
