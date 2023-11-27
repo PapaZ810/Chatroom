@@ -32,17 +32,14 @@ public class ReaderThread implements Runnable
 							String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
 							String time = message.substring(message.indexOf(",") + 1, message.lastIndexOf(","));
 							String msg = message.substring(message.lastIndexOf(",") + 1, message.indexOf(">"));
-							if(sender.equalsIgnoreCase("server")) {
-
-							}
 							screen.displayMessage(sender + " (" + time + "): " + msg);
 						}
 						case "private" -> {
 							String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
-							String recipient = message.substring(message.indexOf(",") + 1, message.indexOf(",", message.indexOf(",") + 1));
 							String time = message.substring(message.indexOf(",") + 1, message.lastIndexOf(","));
-							time = time.substring(time.indexOf(",")+1);
 							String msg = message.substring(message.lastIndexOf(",") + 1, message.indexOf(">"));
+							time = time.substring(time.indexOf(",")+1);
+							String recipient = message.substring(message.indexOf(",") + 1, message.indexOf(",", message.indexOf(",") + 1));
 							screen.displayMessage(sender + " (" + time + ") to " + recipient + ": " + msg);
 						}
 						case "userlist" -> {

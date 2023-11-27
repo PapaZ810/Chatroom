@@ -25,6 +25,9 @@ public class Handler
 			while (true) {
 				message = fromClient.readLine();
                 String currentTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+                int commaCount = message.length() - message.replace(",", "").length();
+                int leftCount = message.length() - message.replace("<", "").length();
+                int rightCount = message.length() - message.replace(">", "").length();
                 switch (message.substring(0, message.indexOf("<"))) {
                     case "user" -> {
                         username = message.substring(message.indexOf("<") + 1, message.indexOf(">"));
@@ -50,6 +53,9 @@ public class Handler
                         if(message.length() > 1024) {
                             toClient.write("5\n");
                             toClient.flush();
+                        } else if((commaCount != 2) || (leftCount != 1) || (rightCount != 1)) {
+                            toClient.write("6\n");
+                            toClient.flush();
                         } else {
                             String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
                             clients.get(sender).write("8\n");
@@ -62,6 +68,9 @@ public class Handler
                     case "private" -> {
                         if(message.length() > 1024) {
                             toClient.write("5\n");
+                            toClient.flush();
+                        } else if((commaCount != 3) || (leftCount != 1) || (rightCount != 1)) {
+                            toClient.write("6\n");
                             toClient.flush();
                         } else {
                             String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
