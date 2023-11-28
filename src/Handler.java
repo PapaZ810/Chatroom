@@ -46,6 +46,10 @@ public class Handler
                                 toClient.write(key + ",");
                             }
                             toClient.write(">\n");
+                            for (String key : clients.keySet()) {
+                                clients.get(key).write("broadcast<server," + currentTime + "," + username + " has joined the chatroom.>\n");
+                                clients.get(key).flush();
+                            }
                         }
                         toClient.flush();
                     }
@@ -76,6 +80,8 @@ public class Handler
                             String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
                             String recipient = message.substring(message.indexOf(",") + 1, message.indexOf(",", message.indexOf(",") + 1));
                             clients.get(sender).write("7\n");
+                            clients.get(sender).write(message + "\n");
+                            clients.get(sender).flush();
                             if (clients.containsKey(recipient)) {
                                 clients.get(recipient).write(message + "\n");
                                 clients.get(recipient).flush();
@@ -94,12 +100,13 @@ public class Handler
                         }
                         clients.get(sender).write(">\n");
                         clients.get(sender).flush();
+                        System.out.println("User list sent to " + sender);
                     }
                     case "exit" -> {
                         String sender = message.substring(message.indexOf("<") + 1, message.indexOf(">"));
                         clients.remove(sender).close();
                         for (String key : clients.keySet()) {
-                            clients.get(key).write("broadcast<" + sender + "," + currentTime + "," + sender + " has left the chatroom.>\n");
+                            clients.get(key).write("broadcast<server," + currentTime + "," + sender + " has left the chatroom.>\n");
                             clients.get(key).flush();
                         }
                     }
