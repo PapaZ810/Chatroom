@@ -100,7 +100,6 @@ public class Handler
                         }
                         clients.get(sender).write(">\n");
                         clients.get(sender).flush();
-                        System.out.println("User list sent to " + sender);
                     }
                     case "exit" -> {
                         String sender = message.substring(message.indexOf("<") + 1, message.indexOf(">"));
