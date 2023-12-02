@@ -14,6 +14,7 @@ public class ReaderThread implements Runnable
 	Socket server;
 	BufferedReader fromServer;
 	ChatScreen screen;
+	Vector<String> userList;
 
 	public ReaderThread(Socket server, ChatScreen screen) {
 		this.server = server;
@@ -27,6 +28,17 @@ public class ReaderThread implements Runnable
 			while (true) {
 				String message = fromServer.readLine();
 				if (message.contains("<") || message.contains(">")) {
+					if (message.substring(message.indexOf("<") + 1, message.indexOf(",")).equals("server")) {
+						String temp = message.substring(message.indexOf(",") + 1);
+						if (message.contains("joined")) {
+							temp = temp.substring(temp.indexOf(",") + 1, temp.indexOf("joined") - 1);
+							userList.add(temp);
+						} else {
+							temp = temp.substring(temp.indexOf(",") + 1, temp.indexOf("left") - 1);
+							userList.remove(temp);
+						}
+						screen.setUserList(userList);
+					}
 					switch(message.substring(0, message.indexOf("<"))){
 						case "broadcast" -> {
 							String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
@@ -44,7 +56,8 @@ public class ReaderThread implements Runnable
 						}
 						case "userlist" -> {
 							String list = message.substring(message.indexOf("<")+1, message.indexOf(">"));
-							screen.setUserList(new Vector<>(Arrays.asList(list.split(","))));
+							userList = new Vector<>(Arrays.asList(list.split(",")));
+							screen.setUserList(userList);
 						}
 						default -> screen.displayMessage(message);
 					}

@@ -47,7 +47,7 @@ public class Handler
                             }
                             toClient.write(">\n");
                             for (String key : clients.keySet()) {
-                                clients.get(key).write("broadcast<server," + currentTime + "," + username + " has joined the chatroom.>\n");
+                                clients.get(key).write("broadcast<server," + currentTime + "," + username + " joined the chatroom.>\n");
                                 clients.get(key).flush();
                             }
                         }
@@ -105,7 +105,7 @@ public class Handler
                         String sender = message.substring(message.indexOf("<") + 1, message.indexOf(">"));
                         clients.remove(sender).close();
                         for (String key : clients.keySet()) {
-                            clients.get(key).write("broadcast<server," + currentTime + "," + sender + " has left the chatroom.>\n");
+                            clients.get(key).write("broadcast<server," + currentTime + "," + sender + " left the chatroom.>\n");
                             clients.get(key).flush();
                         }
                     }
