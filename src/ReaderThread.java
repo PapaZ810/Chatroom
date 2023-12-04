@@ -28,10 +28,7 @@ public class ReaderThread implements Runnable
 			while (true) {
 				String message = fromServer.readLine();
 				if (message.contains("<") || message.contains(">")) {
-					String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
-					String time = message.substring(message.indexOf(",") + 1, message.lastIndexOf(","));
-					String msg = message.substring(message.lastIndexOf(",") + 1, message.indexOf(">"));
-					if (sender.equals("server")) {
+					if (message.substring(message.indexOf("<") + 1, message.indexOf(",")).equals("server")) {
 						String temp = message.substring(message.indexOf(",") + 1);
 						if (message.contains("joined")) {
 							temp = temp.substring(temp.indexOf(",") + 1, temp.indexOf("joined") - 1);
@@ -44,9 +41,15 @@ public class ReaderThread implements Runnable
 					}
 					switch(message.substring(0, message.indexOf("<"))){
 						case "broadcast" -> {
+							String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
+							String time = message.substring(message.indexOf(",") + 1, message.lastIndexOf(","));
+							String msg = message.substring(message.lastIndexOf(",") + 1, message.indexOf(">"));
 							screen.displayMessage(sender + " (" + time + "): " + msg);
 						}
 						case "private" -> {
+							String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
+							String time = message.substring(message.indexOf(",") + 1, message.lastIndexOf(","));
+							String msg = message.substring(message.lastIndexOf(",") + 1, message.indexOf(">"));
 							time = time.substring(time.indexOf(",")+1);
 							String recipient = message.substring(message.indexOf(",") + 1, message.indexOf(",", message.indexOf(",") + 1));
 							screen.displayMessage(sender + " (" + time + ") to " + recipient + ": " + msg);
