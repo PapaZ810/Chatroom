@@ -25,6 +25,9 @@ public class Handler
 			while (true) {
 				message = fromClient.readLine();
                 String currentTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+                int commaCount = message.length() - message.replace(",", "").length();
+                int leftCount = message.length() - message.replace("<", "").length();
+                int rightCount = message.length() - message.replace(">", "").length();
                 switch (message.substring(0, message.indexOf("<"))) {
                     case "user" -> {
                         username = message.substring(message.indexOf("<") + 1, message.indexOf(">"));
@@ -43,12 +46,19 @@ public class Handler
                                 toClient.write(key + ",");
                             }
                             toClient.write(">\n");
+                            for (String key : clients.keySet()) {
+                                clients.get(key).write("broadcast<server," + currentTime + "," + username + " joined the chatroom.>\n");
+                                clients.get(key).flush();
+                            }
                         }
                         toClient.flush();
                     }
                     case "broadcast" -> {
                         if(message.length() > 1024) {
                             toClient.write("5\n");
+                            toClient.flush();
+                        } else if((commaCount != 2) || (leftCount != 1) || (rightCount != 1)) {
+                            toClient.write("6\n");
                             toClient.flush();
                         } else {
                             String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
@@ -63,10 +73,15 @@ public class Handler
                         if(message.length() > 1024) {
                             toClient.write("5\n");
                             toClient.flush();
+                        } else if((commaCount != 3) || (leftCount != 1) || (rightCount != 1)) {
+                            toClient.write("6\n");
+                            toClient.flush();
                         } else {
                             String sender = message.substring(message.indexOf("<") + 1, message.indexOf(","));
                             String recipient = message.substring(message.indexOf(",") + 1, message.indexOf(",", message.indexOf(",") + 1));
                             clients.get(sender).write("7\n");
+                            clients.get(sender).write(message + "\n");
+                            clients.get(sender).flush();
                             if (clients.containsKey(recipient)) {
                                 clients.get(recipient).write(message + "\n");
                                 clients.get(recipient).flush();
@@ -90,7 +105,7 @@ public class Handler
                         String sender = message.substring(message.indexOf("<") + 1, message.indexOf(">"));
                         clients.remove(sender).close();
                         for (String key : clients.keySet()) {
-                            clients.get(key).write("broadcast<" + sender + "," + currentTime + "," + sender + " has left the chatroom.>\n");
+                            clients.get(key).write("broadcast<server," + currentTime + "," + sender + " left the chatroom.>\n");
                             clients.get(key).flush();
                         }
                     }
